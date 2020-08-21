@@ -111,7 +111,7 @@ router.put('/edit', security.verifyToken, security.validateTokenClient, (req, re
 
     
     if(bio == undefined){
-        this.bio = "No bio"
+        this.bio = ""
     }
     if(weight == undefined || height == undefined || username === undefined || name === undefined || surname === undefined || email === undefined || password ===undefined){
         return res.status(500).send({'msg': "MISSING FIELDS"});

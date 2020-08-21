@@ -51,20 +51,20 @@ router.put('/edit', security.verifyToken, security.validateToken, (req, res) => 
     let bio = req.body.bio;
 
     if(bio == undefined){
-        this.bio = "No bio"
+        this.bio = ""
     }
     if(username === undefined || name === undefined || surname === undefined || email === undefined || password ===undefined){
         return res.status(500).send({'msg': "MISSING FIELDS"});
     }
 
-    let sql = "select password from coach where coach_id=$1";
+    let sql = `select * from coach where coach_id=$1 and password = '${password}'`;
     db.query(sql, [coach_id], (err, result) => {
         if(err){
             console.log(err);
             return res.status(500).send({'msg': err});
         }
-        if(result.rows[0].password === password) {
-            return res.status(500).send({'msg': "Equal password as before"});
+        if(result.rows[0] != undefined) {
+            return res.status(500).send({'msg': "You cannot use the same password as before!"});
         }
         let sql_update = "update coach set name = $1, surname =$2, email=$3, password=$4, username=$5, bio=$6 where coach_id=$7";
         db.query(sql_update, [name, surname, email, password, username, bio, coach_id], (err, result) =>{
