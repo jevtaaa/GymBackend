@@ -6,7 +6,7 @@ const security = require('../security/jwt');
 
 router.get('/', security.verifyToken, security.validateToken, (req, res) => {
     
-    let sql = "select * from exercise";
+    let sql = "select * from exercise order by exercise_id";
     db.query(sql, (err, result) => {
         if (err) {
             console.log(err);
