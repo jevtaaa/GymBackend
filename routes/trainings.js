@@ -24,9 +24,8 @@ router.get('/single', security.verifyToken, security.validateToken, (req, res) =
     });
 });
 
-router.get('/details', security.verifyToken, security.validateToken, (req, res) => {
-    let training_id = req.body.training_id;
-
+router.get('/details/:id', security.verifyToken, security.validateToken, (req, res) => {
+    let training_id = req.params.id;
     let sql = "select ex.exercise_id, ex.name, ex.description, te.repetitions, te.effort from training_exercises te join exercise ex on (te.exercise_id = ex.exercise_id) where te.training_id = $1";
     db.query(sql, [training_id], (err, result) => {
         if (err) {
@@ -103,8 +102,8 @@ router.put('/edit', security.verifyToken, security.validateToken, (req, res) => 
     });
 });
 
-router.patch('/delete', security.verifyToken, security.validateToken, (req, res) => {
-    let training_id = req.body.training_id;
+router.delete('/delete/:id', security.verifyToken, security.validateToken, (req, res) => {
+    let training_id = req.params.id;
 
     let sql = "update training set archived = true where training_id=$1";
     db.query(sql, [training_id], (err, result) => {
@@ -112,14 +111,14 @@ router.patch('/delete', security.verifyToken, security.validateToken, (req, res)
             console.log(err);
             return res.status(500).send({ 'msg': err });
         } else {
-            res.send(result.rows);
+            res.status(200).send({'msg': "Successful delete of training"})
         }
     });
 });
 
 function getAllTrainings(coach_id, res){
 
-    let sql = "select * from training where coach_id = $1 and archived = false";
+    let sql = "select * from training where coach_id = $1 and archived = false order by training_id";
 
     db.query(sql, [coach_id], (err, result) => {
         if (err) {
