@@ -149,24 +149,20 @@ router.put('/update-client-training', security.verifyToken, security.validateTok
     let client_id = req.body.client_id;
     let training_id = req.body.training_id;
 
-    if(client_id == undefined){
-        return res.status(500).send({'msg': "Enter everything"});
-    }
+    let sql = "update client set training_id = $1 where client_id = $2";
 
-    let sql = "update client set training_id = $1 where client_id = $2 and coach_id = $3";
-
-    db.query(sql, [training_id, client_id, req.res.locals.id], (err) => {
+    db.query(sql, [training_id, client_id], (err) => {
         if (err) {
             console.log(err);
             return res.status(500).send({ 'msg': err });
         }
-        let sql = "select * from client where client_id=$1 and coach_id = $2";
-        db.query(sql, [client_id, req.res.locals.id], (err, result) => {
+        let sql1 = "select * from client where client_id=$1";
+        db.query(sql1, [client_id], (err, result) => {
             if(err){
                 console.log(err);
                 return res.status(500).send({'msg': err});
-            }          
-            res.status(200).send(result.rows[0]);
+            }  
+            res.send(result.rows[0]);
         });       
     });
 });
