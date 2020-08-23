@@ -26,7 +26,7 @@ router.get('/single/:id', security.verifyToken, security.validateToken, (req, re
 
 router.get('/details/:id', security.verifyToken, security.validateToken, (req, res) => {
     let training_id = req.params.id;
-    let sql = "select ex.exercise_id, ex.name, ex.description, te.repetitions, te.effort from training_exercises te join exercise ex on (te.exercise_id = ex.exercise_id) where te.training_id = $1";
+    let sql = "select ex.exercise_id, ex.name, ex.description, te.repetitions, te.series from training_exercises te join exercise ex on (te.exercise_id = ex.exercise_id) where te.training_id = $1";
     db.query(sql, [training_id], (err, result) => {
         if (err) {
             console.log(err);
@@ -54,7 +54,7 @@ router.put('/save', security.verifyToken, security.validateToken, (req, res) => 
             console.log(training_id);
             exercises.forEach(element => {
                 let sql2 = "insert into training_exercises values ($1, $2, $3, $4)";
-                db.query(sql2, [training_id, element.exercise_id, element.repetitions, element.effort], (err, result) => {
+                db.query(sql2, [training_id, element.exercise_id, element.repetitions, element.series], (err, result) => {
                     if (err) {
                         console.log(err);
                         return res.status(500).send({ 'msg': err });
@@ -88,7 +88,7 @@ router.put('/edit', security.verifyToken, security.validateToken, (req, res) => 
                 } else {
                     exercises.forEach(element => {
                         let sql3 = "insert into training_exercises values ($1, $2, $3, $4)";
-                        db.query(sql3, [training_id, element.exercise_id, element.repetitions, element.effort], (err, result) => {
+                        db.query(sql3, [training_id, element.exercise_id, element.repetitions, element.series], (err, result) => {
                             if (err) {
                                 console.log(err);
                                 return res.status(500).send({ 'msg': err });
