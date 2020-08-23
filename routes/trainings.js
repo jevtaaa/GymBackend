@@ -10,8 +10,8 @@ router.get('/', security.verifyToken, security.validateToken, (req, res) => {
     getAllTrainings(req.res.locals.id, res);
 });
 
-router.get('/single', security.verifyToken, security.validateToken, (req, res) => {
-    let training_id = req.body.training_id;
+router.get('/single/:id', security.verifyToken, security.validateToken, (req, res) => {
+    let training_id = req.params.id;
 
     let sql = "select * from training where training_id = $1 and coach_id = $2";
     db.query(sql, [training_id, req.res.locals.id], (err, result) => {

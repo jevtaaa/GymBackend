@@ -8,7 +8,7 @@ const security = require('../security/jwt');
 router.use(bodyParser());
 
 router.get('/', security.verifyToken, security.validateToken, (req, res) => {
-    var sql = "select client_id, name, surname, email, username, bio, training_id, height, weight from client where coach_id = $1";
+    var sql = "select client_id, name, surname, email, username, bio, training_id, height, weight from client where coach_id = $1 order by client_id";
 
     db.query(sql, [req.res.locals.id], (err, result) => {
 
