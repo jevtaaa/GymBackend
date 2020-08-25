@@ -19,7 +19,7 @@ router.get('/single/:id', security.verifyToken, security.validateToken, (req, re
             console.log(err);
             return res.status(500).send({ 'msg': err });
         } else {
-            res.send(result.rows);
+            res.send(result.rows[0]);
         }
     });
 });

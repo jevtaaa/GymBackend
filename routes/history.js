@@ -46,14 +46,14 @@ router.put('/add-history', security.verifyToken, security.validateTokenClient, (
                 console.log(err);
                 return res.status(500).send({'msg': err});
             }          
-            res.status(200).send(result.rows[0]);
+            res.status(200).send(result.rows);
         });       
     });
 });
 
 //trener koristi
 router.get('/client-history/:id', security.verifyToken, security.validateToken, (req, res) => { 
-    let client_id = req.params.client_id;
+    let client_id = req.params.id;
     
     let sql = "select date, training_id, comment from history where client_id = $1";
 
