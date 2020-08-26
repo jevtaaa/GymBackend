@@ -44,24 +44,30 @@ router.put('/save', security.verifyToken, security.validateToken, (req, res) => 
     let date = new Date();
     let exercises = req.body.exercises;
 
-    let sql = "insert into training (name, description, date, coach_id) values ($1,$2,$3,$4) returning training_id";
-    db.query(sql, [name, description, date, coach_id], (err, result) => {
+    let sql = "insert into training (name, description, date, coach_id, archived) values ($1,$2,$3,$4,$5) returning training_id";
+    db.query(sql, [name, description, date, coach_id, false], (err, result1) => {
         if (err) {
             console.log(err);
             return res.status(500).send({ 'msg': err });
         } else {
-            let training_id = result.rows[0].training_id;
-            console.log(training_id);
+            let training_id = result1.rows[0].training_id;
             exercises.forEach(element => {
-                let sql2 = "insert into training_exercises values ($1, $2, $3, $4)";
-                db.query(sql2, [training_id, element.exercise_id, element.repetitions, element.series], (err, result) => {
-                    if (err) {
-                        console.log(err);
-                        return res.status(500).send({ 'msg': err });
-                    }
+            let sql2 = "insert into training_exercises values ($1, $2, $3, $4)";
+            db.query(sql2, [training_id, element.exercise_id, element.repetitions, element.series], (err, result2) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(500).send({ 'msg': err });
+                }
                 });
             });
-            res.status(200).send();
+            let sql3 = "select * from training where training_id=$1";
+                db.query(sql3, [training_id], (err, result3) => {
+                    if(err){
+                        console.log(err);
+                        return res.status(500).send({'msg': err});
+                    } 
+                    res.send(result3.rows[0]);
+            })
         }
     });
 });
