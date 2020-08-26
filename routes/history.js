@@ -11,7 +11,7 @@ router.use(bodyParser());
 router.get('/', security.verifyToken, security.validateTokenClient, (req, res) => { 
     this.client_id = req.res.locals.id;
     
-    let sql = "select date, training_id, comment from history where client_id = $1";
+    let sql = "select date, training_id, comment from history where client_id = $1 order by date";
 
     db.query(sql, [client_id], (err, result) => {
         if (err) {
@@ -55,7 +55,7 @@ router.put('/add-history', security.verifyToken, security.validateTokenClient, (
 router.get('/client-history/:id', security.verifyToken, security.validateToken, (req, res) => { 
     let client_id = req.params.id;
     
-    let sql = "select date, training_id, comment from history where client_id = $1";
+    let sql = "select date, training_id, comment from history where client_id = $1 order by date";
 
     db.query(sql, [client_id], (err, result) => {
         if (err) {
