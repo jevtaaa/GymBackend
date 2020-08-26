@@ -41,6 +41,20 @@ router.patch('/login', (req, res) => {
     });
 });
 
+router.get('/:id', security.verifyToken, security.validateTokenClient, (req, res) => {
+    let coach_id = req.params.id;
+
+    let sql = "select coach_id, username, name, surname, email, bio from coach where coach_id = $1";
+    db.query(sql, [coach_id], (err, result) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).send({ 'msg': err });
+        } else {
+            res.send(result.rows[0]);
+        }
+    });
+});
+
 router.put('/edit', security.verifyToken, security.validateToken, (req, res) => {
     let coach_id = req.res.locals.id;
     let email = req.body.email;

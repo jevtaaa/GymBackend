@@ -24,7 +24,21 @@ router.get('/single/:id', security.verifyToken, security.validateToken, (req, re
     });
 });
 
-router.get('/details/:id', security.verifyToken, security.validateToken, (req, res) => {
+router.get('/:id', security.verifyToken, security.validateTokenClient, (req, res) => {
+    let training_id = req.params.id;
+
+    let sql = "select * from training where training_id = $1";
+    db.query(sql, [training_id], (err, result) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).send({ 'msg': err });
+        } else {
+            res.send(result.rows[0]);
+        }
+    });
+});
+
+router.get('/details/:id', security.verifyToken, (req, res) => {
     let training_id = req.params.id;
     let sql = "select ex.exercise_id, ex.name, ex.description, te.repetitions, te.series from training_exercises te join exercise ex on (te.exercise_id = ex.exercise_id) where te.training_id = $1";
     db.query(sql, [training_id], (err, result) => {
